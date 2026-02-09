@@ -2,7 +2,9 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gerador de Keys</title>
+
 <style>
 body{
   margin:0;
@@ -11,7 +13,7 @@ body{
   display:flex;
   justify-content:center;
   align-items:center;
-  font-family:sans-serif;
+  font-family:'Segoe UI',sans-serif;
   color:white;
 }
 .card{
@@ -34,46 +36,47 @@ button{
   font-weight:bold;
   cursor:pointer;
 }
+#out{
+  margin-top:15px;
+  background:#0f001f;
+  padding:12px;
+  border-radius:10px;
+  word-break:break-all;
+}
 </style>
 </head>
 <body>
 
 <div class="card">
   <h2>Gerador de Keys</h2>
-  <button onclick="gerar(1)">1 Dia</button>
-  <button onclick="gerar(4)">4 Dias</button>
-  <button onclick="gerar(30)">30 Dias</button>
-  <button onclick="gerar(0)">Permanente</button>
+
+  <button onclick="gerar(1)">Key • 1 Dia</button>
+  <button onclick="gerar(4)">Key • 4 Dias</button>
+  <button onclick="gerar(30)">Key • 30 Dias</button>
+  <button onclick="gerar(0)">Key • Permanente</button>
+
+  <div id="out">Clique para gerar</div>
 </div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+<script>
+const SEGREDO = "AIMBOT_2026"; // ⚠️ NÃO MUDA
 
-const firebaseConfig = {
-  apiKey: "SUA_API_KEY",
-  authDomain: "SEU_PROJETO.firebaseapp.com",
-  projectId: "SEU_PROJETO"
-};
+function assinar(valor){
+  let h=0;
+  for(let i=0;i<valor.length;i++)
+    h=(h<<5)-h+valor.charCodeAt(i);
+  return Math.abs(h).toString(36).toUpperCase().slice(0,6);
+}
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+function gerar(dias){
+  const expira = dias === 0 ? 0 : Date.now() + dias*86400000;
+  const assinatura = assinar(expira + SEGREDO);
+  const key = `AIM-${expira}-${assinatura}`;
 
-window.gerar = async function(dias){
-  const key = "KEY-" + Math.random().toString(36).substring(2,6).toUpperCase()
-                    + "-" + Math.random().toString(36).substring(2,6).toUpperCase();
-
-  const expira = dias === 0 ? 0 : Date.now() + dias * 86400000;
-
-  await addDoc(collection(db,"keys"),{
-    key,
-    expira,
-    bloqueada:false
-  });
-
-  alert("Key gerada:\n" + key);
+  document.getElementById("out").innerText =
+    "KEY GERADA:\n\n" + key;
 }
 </script>
 
 </body>
-  </html>
+</html>
