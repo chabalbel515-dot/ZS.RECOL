@@ -59,22 +59,25 @@ button{
 </div>
 
 <script>
-const SEGREDO = "AIMBOT_2026"; // ⚠️ NÃO MUDA
+const SEGREDO = "AIMBOT_2026";
 
 function assinar(valor){
-  let h=0;
-  for(let i=0;i<valor.length;i++)
-    h=(h<<5)-h+valor.charCodeAt(i);
-  return Math.abs(h).toString(36).toUpperCase().slice(0,6);
+  let h = 0;
+  for (let i = 0; i < valor.length; i++)
+    h = (h << 5) - h + valor.charCodeAt(i);
+  return Math.abs(h).toString(36).toUpperCase().slice(0, 6);
 }
 
 function gerar(dias){
-  const expira = dias === 0 ? 0 : Date.now() + dias*86400000;
-  const assinatura = assinar(expira + SEGREDO);
+  const deviceId = getDeviceId();
+  const expira = dias === 0 ? 0 : Date.now() + dias * 86400000;
+  const assinatura = assinar(expira + deviceId + SEGREDO);
+
   const key = `AIM-${expira}-${assinatura}`;
 
   document.getElementById("out").innerText =
     "KEY GERADA:\n\n" + key;
+      }
 }
 </script>
 
